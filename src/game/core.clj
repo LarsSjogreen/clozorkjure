@@ -1,53 +1,33 @@
-(ns game.core
-  (:gen-class))
+(ns game.core (:gen-class))
 
-(use 'clojure.tools.namespace.repl)
+(load "random")
+(load "rooms_and_map")
+
 ; Use (refresh) to refresh in repl
+(use 'clojure.tools.namespace.repl)
 
-; Support functions for RPG-like random functions
-(defn randomize [lowlim uplim] (int (+ lowlim (* (rand) (- uplim lowlim)))))
-(defn d6 [] (randomize 1 7))
-(defn d10 [] (randomize 1 11))
-
-; Rooms and map
-(defrecord room [name text symbol])
-
-(def woods (->room "Woods" "Trees and shrubbery. And pine cones." :woods))
-(def livingroom (->room "Living room" "A nice cozy couch and a bookcase." :livingroom))
-(def kitchen (->room "Kitchen" "This looks like a kitchen. It's hot and it you can smell tasty, tasty food." :kitchen))
-(def cellar (->room "Cellar" "It's dark and terrifying here. It smells of moss and mold." :cellar))
-(def corridor (->room "Corridor" "This is a long and boring corridor" :corridor))
-
-(def worldmap { 
-	:kitchen { :room kitchen :south livingroom :north woods :west corridor } 
-	:livingroom { :room livingroom :north kitchen :down cellar } 
-	:woods { :room woods :south kitchen }
-	:corridor { :room corridor :east kitchen }
-	:cellar { :room cellar :up livingroom }})
-
+; Command validation and quit
 (def valCommands #{"south" "north" "west" "east" "up" "down" "look" "help" "greet" "quit" "exits" })
+(defn invalid [room] (println "Invalid command") room)
+(defn valC? [com] (contains? valCommands com))
+(defn quit? [x] (if (= "quit" x) true false))
 
 ; Game commands
 (defn look [room] (println (:text room)) room)
 (defn roomname [room] (println (:name room)) room)
 (defn help [room] (println valCommands) room)
 (defn exits [room] (println (keys (worldmap (:symbol room)))) room)
+(defn greet [room] (println "This is a game called Game.") room)
 
-(defn godir [room dir] (roomname (dir ((:symbol room) worldmap))))
-
+; Direction valCommands
+(defn invaliddir? [room dir] (= nil (dir ((:symbol room) worldmap))))
+(defn godir [room dir] (if (invaliddir? room dir) (do (println "You can't go that way") room) (roomname (dir ((:symbol room) worldmap)))))
 (defn south [room] (godir room :south))
 (defn north [room] (godir room :north))
 (defn west [room] (godir room :west))
 (defn east [room] (godir room :east))
 (defn down [room] (godir room :down))
 (defn up [room] (godir room :up))
-(defn invalid [room] (println "Invalid command") room)
-
-(defn valC? [com] (contains? valCommands com))
-
-(defn quit? [x] (if (= "quit" x) true false))
-
-(defn greet [room] (println "This is a game called Game.") room)
 
 ; Another dispatcher method
 (defn doro [act parm] ((ns-resolve 'game.core (symbol act)) parm))
