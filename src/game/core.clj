@@ -7,10 +7,10 @@
 (use 'clojure.tools.namespace.repl)
 
 ; Command validation and quit
-(def valCommands #{"south" "north" "west" "east" "up" "down" "look" "help" "greet" "quit" "exits" })
+(def valCommands #{"south" "north" "west" "east" "up" "down" "look" "help" "greet" "exit" "quit" "exits" })
 (defn invalid [room] (println "Invalid command") room)
 (defn valC? [com] (contains? valCommands com))
-(defn quit? [x] (if (= "quit" x) true false))
+(defn quit? [x] (if (or (= "quit" x) (= "exit" x)) true false))
 
 ; Game commands
 (defn look [room] (println (:text room)) room)
