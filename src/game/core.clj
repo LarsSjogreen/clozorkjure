@@ -17,8 +17,11 @@
 ; Command validation and quit
 (def valCommands #{"south" "north" "west" "east" "up" 
 	"down" "look" "help" "greet" "exit" "quit" "exits" "inventory" "pickup" "status" "debug" })
+
+(def valWCommands #{"examine" "usethe"})
 (defn invalid [state] (println "Invalid command") state)
 (defn valC? [com] (contains? valCommands (first (str/split com #" "))))
+(defn valW? [com] (contains? valWCommands com))
 (defn quit? [x] (if (or (= "quit" x) (= "exit" x)) true false))
 
 (defn newroom [state room] (->statecol room (:user state) (:inventory state)))
@@ -34,7 +37,9 @@
 (defn status [state] (do (println "\n" (-> state :user :name)) (println "Hp: " (-> state :user :hp)) (inventory state)))
 (defn roomname [state] (println (:name (:room state))) state)
 (defn greet [state] (println "This is a game called Game.  ---  ( Version" version ")") state)
-;(defn prip [state])
+
+(defn examine [thing state] (println "You are examining " thing) state)
+(defn usethe [thing state] (println "You use" thing) state)
 
 ; Direction valCommands
 (defn invaliddir? [room dir] (= nil (dir ((:symbol room) worldmap))))
@@ -48,6 +53,7 @@
 
 ; Another dispatcher method
 (defn doro [act state] ((ns-resolve 'game.core (symbol act)) state))
+(defn dowith [act acton state] (if (valW? act) ((ns-resolve 'game.core (symbol act)) acton state) ((println "You can't do that") state)))
 
 (defn input [state imp] (loop [stat state inpot imp]
 	(if (valC? inpot)
