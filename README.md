@@ -1,6 +1,6 @@
 # game
 
-FIXME: description
+A kind of text based adventure game.
 
 ## Installation
 
