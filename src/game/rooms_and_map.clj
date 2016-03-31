@@ -27,3 +27,5 @@
 	:rootcellar { :room rootcellar :south cellar }
 	:office { :room office :east corridor }
 	:frontlawn { :room frontlawn :west kitchen }})
+
+(def thinguse { :keyT { :room office :message "You open the desk drawer. It's empty" } })

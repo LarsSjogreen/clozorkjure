@@ -16,7 +16,7 @@
 
 ; Command validation and quit
 (def valCommands #{"south" "north" "west" "east" "up" 
-	"down" "look" "help" "greet" "exit" "quit" "exits" "inventory" "pickup" "status" "debug" })
+	"down" "look" "help" "greet" "exit" "quit" "exits" "inventory" "pickup" "status" "debug" "useRoom" "usethe" })
 
 (def valWCommands #{"examine" "usethe"})
 (defn invalid [state] (println "Invalid command") state)
@@ -39,6 +39,9 @@
 (defn greet [state] (println "This is a game called Game.  ---  ( Version" version ")") state)
 
 (defn examine [thing state] (println "You are examining " thing) state)
+(defn useRoom [thing state] (if (= (thinguse (keyword thing) :room) (:room state))
+	(println (thinguse (keyword thing) :message))
+	(print "You try to use it but you fail")) state)
 (defn usethe [thing state] (println "You use" thing) state)
 
 ; Direction valCommands
@@ -54,11 +57,12 @@
 ; Another dispatcher method
 (defn doro [act state] ((ns-resolve 'game.core (symbol act)) state))
 (defn dowith [act acton state] (if (valW? act) ((ns-resolve 'game.core (symbol act)) acton state) ((println "You can't do that") state)))
+(defn dodi [act state] (if (= 2 (count (str/split act #" "))) (apply dowith (conj state (re-seq #"[^ ]+" act))) (doro act state)))
 
 (defn input [state imp] (loop [stat state inpot imp]
 	(if (valC? inpot)
-	(if (quit? inpot) (println "hasta la vista!") 
-		(recur (doro inpot stat) (read-line)))
+	(if (quit? inpot) (println "hasta la vista!")
+		(recur (dodi inpot stat) (read-line)))
 	(recur (doro "invalid" stat) (read-line)))))
 
 (def startState (->statecol kitchen (->userstate "Frankenstein" 20) (->inventorystate [])))
