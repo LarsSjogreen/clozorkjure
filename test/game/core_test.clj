@@ -23,3 +23,11 @@
 		(is (quit? "exit")))
 	(testing "Stop doesn't quit"
 		(is not (quit? "stop"))))
+
+(deftest moveSouth
+	(testing "Can move south"
+		(is (= livingroom (:room (south startState)))))
+	(testing "Can't move south from livingroom. Will stay in livingroom."
+		(is (= livingroom (:room (south (south startState))))))
+	(testing "Can't move south from livingroom, even if trying twice."
+		(is (= livingroom (:room (south (south (south startState))))))))
