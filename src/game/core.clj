@@ -1,6 +1,7 @@
 (ns game.core (:gen-class))
 (require '[clojure.string :as str])
 (use 'clojure.pprint)
+(require '[clojure.string :as str])
 
 (load "random")
 (load "rooms_and_map")
@@ -16,7 +17,7 @@
 
 ; Command validation and quit
 (def valCommands #{"south" "north" "west" "east" "up" 
-	"down" "look" "help" "greet" "exit" "quit" "exits" "inventory" "pickup" "status" "debug" })
+	"down" "look" "help" "greet" "exit" "quit" "exits" "inventory" "pickup" "status" "debug" "examine" "usethe"})
 
 (def valWCommands #{"examine" "usethe"})
 (defn invalid [state] (println "Invalid command") state)
@@ -54,11 +55,14 @@
 ; Another dispatcher method
 (defn doro [act state] ((ns-resolve 'game.core (symbol act)) state))
 (defn dowith [act acton state] (if (valW? act) ((ns-resolve 'game.core (symbol act)) acton state) ((println "You can't do that") state)))
+(defn dispatch [act state] 
+	(if (= 2 (count (str/split act #" "))) (apply dowith (conj (str/split act #" ") state)) (if (= 1 (count (str/split act #" "))) (doro act state) (println "wrong number of arguments"))))
+;defn pirr [string] (pprint (str/split string #" ")))
 
 (defn input [state imp] (loop [stat state inpot imp]
 	(if (valC? inpot)
 	(if (quit? inpot) (println "hasta la vista!") 
-		(recur (doro inpot stat) (read-line)))
+		(recur (dispatch inpot stat) (read-line)))
 	(recur (doro "invalid" stat) (read-line)))))
 
 (def startState (->statecol kitchen (->userstate "Frankenstein" 20) (->inventorystate [])))

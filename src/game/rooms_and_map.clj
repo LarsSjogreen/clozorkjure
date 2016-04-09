@@ -15,6 +15,7 @@
 (def clearing (->room "A clearing" "The forest opens up into a small clearing. With a pond." :clearing :mapT ))
 (def road (->room "A forest road" "A dwindling forest road." :road nil ))
 (def bridge (->room "A bridge" "A rickety bridge over a fast flowing stream in the forest." :bridge nil ))
+(def attic (->room "An attic" "A tusty and dark old attic. Probably filled with spiders and stuff" :attic nil))
 
 (def worldmap { 
 	:kitchen { :room kitchen :south livingroom :north woods :west corridor :east frontlawn }
@@ -23,7 +24,8 @@
 	:clearing { :room clearing :south woods :west road }
 	:road { :room road :east clearing :west bridge }
 	:bridge { :room bridge :east road }
-	:corridor { :room corridor :east kitchen :west office }
+	:corridor { :room corridor :east kitchen :west office :up attic }
+	:attic { :room attic :down corridor }
 	:cellar { :room cellar :up livingroom :north rootcellar }
 	:cave { :room cave :up rootcellar }
 	:rootcellar { :room rootcellar :south cellar :down cave }
