@@ -31,3 +31,17 @@
 		(is (= livingroom (:room (south (south startState))))))
 	(testing "Can't move south from livingroom, even if trying twice."
 		(is (= livingroom (:room (south (south (south startState))))))))
+
+;(deftest cangoTest (testing "Testing the canmove function" (is (cango? south startState))))
+
+(deftest addHiddenDoorTest ;should add hidden door to office
+	; Setup
+	(def testState (->statecol office (->userstate "Frankenstein" 20 worldmap) (->inventorystate [:keyT])))
+
+	(testing "Office has a door to the east."
+		(is (not (cantgo? :office :east))))
+	(testing "Office should have no secret door before examining"
+		(is (cantgo? :office :down)))
+	(testing "Can go through trapdoor after activating key in office"
+		(is (do (usethe :keyT testState) (not (cantgo? :office :down)))))
+)

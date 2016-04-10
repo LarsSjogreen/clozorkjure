@@ -31,3 +31,8 @@
 	:rootcellar { :room rootcellar :south cellar :down cave }
 	:office { :room office :east corridor }
 	:frontlawn { :room frontlawn :west kitchen }})
+
+(defn addHiddenDoor [map] (println "ok") map)
+
+(def usemap {
+	:keyT { :room office :action addHiddenDoor }})

@@ -9,7 +9,7 @@
 (def version "1.0")
 
 (defrecord statecol [room user inventory])
-(defrecord userstate [name hp])
+(defrecord userstate [name hp themap])
 (defrecord inventorystate [stuff])
 
 ; Use (refresh) to refresh in repl
@@ -17,7 +17,8 @@
 
 ; Command validation and quit
 (def valCommands #{"south" "north" "west" "east" "up" 
-	"down" "look" "help" "greet" "exit" "quit" "exits" "inventory" "pickup" "status" "debug" "examine" "usethe"})
+	"down" "look" "help" "greet" "exit" "quit" "exits" 
+	"inventory" "pickup" "status" "debug" "examine" "usethe"})
 
 (def valWCommands #{"examine" "usethe"})
 (defn invalid [state] (println "Invalid command") state)
@@ -44,6 +45,7 @@
 
 ; Direction valCommands
 (defn invaliddir? [room dir] (= nil (dir ((:symbol room) worldmap))))
+(defn cantgo? [room dir] (= nil (dir (room worldmap))))
 (defn godir [state dir] (if (invaliddir? (:room state) dir) (do (println "You can't go that way") state) (roomname (newroom state (dir ((:symbol (:room state)) worldmap))))))
 (defn south [state] (godir state :south))
 (defn north [state] (godir state :north))
@@ -65,7 +67,7 @@
 		(recur (dispatch inpot stat) (read-line)))
 	(recur (doro "invalid" stat) (read-line)))))
 
-(def startState (->statecol kitchen (->userstate "Frankenstein" 20) (->inventorystate [])))
+(def startState (->statecol kitchen (->userstate "Frankenstein" 20 worldmap) (->inventorystate [])))
 
 (defn -main
   "This is the main entrypoint to the game called Game."
